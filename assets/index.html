@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Guess the Professor</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" href="./style.css">
+
+  <style>
+    /* body {
+            margin-top: 30px;
+            margin-left: -10px;
+            padding: 0;
+        }  */
+
+    #messageArea {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div>
+    <div class="col-12 button-container">
+      <div id="userFormArea" class="card col-3">
+        <div class="text-container">
+          <h2 style="color: #4177C0">Guess the Professor!</h2>
+        </div>
+        <img id="character"></img>
+        <form id="userForm">
+          <div class="form-group" style="margin-top: 40px;">
+            <h4 style="color: black">Username:</h4>
+            <input class="form-control" id="username"></input>
+            <br/>
+            <div style="text-align: right">
+              <input type="submit" class="btn btn-primary" value="Login" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="messageArea">
+      <!--Header-->
+      <div class="cars header col-12">
+        <h1>Guess the Professor!</h1>
+      </div>
+
+      <!--Sidebar for users-->
+      <div class="card col-2" style="height: 90vh">
+        <div class="button-container">
+          <button type="button" class="button col-12" id="giveUp" onclick="giveUp()">
+            Give Up
+          </button>
+        </div>
+
+        <div class="text-container">
+          <h4 id="player">Player</h4>
+        </div>
+        <img id="playerCharacter" style="width:100%">
+        <div class="text-container">
+          <h4 id="characterName"></h4>
+        </div>
+
+        <div class="opponent-container">
+          <div class="text-container">
+            <h4 id="player2">Waiting for opponent...</h4>
+          </div>
+          <div class="card">
+            <div class="card-container">
+              <div id="01" class="button col-2"></div>
+              <div id="02" class="button col-2"></div>
+              <div id="03" class="button col-2"></div>
+              <div id="04" class="button col-2"></div>
+              <div id="05" class="button col-2"></div>
+            </div>
+            <div class="card-container">
+              <div id="06" class="button col-2"></div>
+              <div id="07" class="button col-2"></div>
+              <div id="08" class="button col-2"></div>
+              <div id="09" class="button col-2"></div>
+              <div id="010" class="button col-2"></div>
+            </div>
+            <div class="card-container">
+              <div id="011" class="button col-2"></div>
+              <div id="012" class="button col-2"></div>
+              <div id="013" class="button col-2"></div>
+              <div id="014" class="button col-2"></div>
+              <div id="015" class="button col-2"></div>
+            </div>
+            <div class="card-container">
+              <div id="016" class="button col-2"></div>
+              <div id="017" class="button col-2"></div>
+              <div id="018" class="button col-2"></div>
+              <div id="019" class="button col-2"></div>
+              <div id="020" class="button col-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Board-->
+      <!-- <div id="board" class="col-7 card"> -->
+      <div id="board" class="card col-7" style="height: 90vh">
+        <div class="card-container">
+          <div class="text-container col-12">
+            Click on images to discard choice. To guess, click on the professor's name.
+            <br /> Remember, if you guess right, you win! If you guess wrong, you automatically lose...
+            <br />
+          </div>
+          <div class="col-2">
+            <img id="1" src="images/ana-salicrup.jpg" alt="Salicrup" style="width:100%">
+            <div class="button-container">
+              <button type="button" onclick="guess(this.value)" value="Salicrup" class="col-12 button-character">Salicrup</button>
+            </div>
+            <img id="2" src="images/jose-caballero.jpg" alt="Caballero" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Caballero" class="col-12 button-character">Caballero</button>
+            </div>
+            <img id="3" src="images/juan-sola.jpg" alt="Sola" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Sola" class="col-12 button-character">Sola</button>
+            </div>
+            <img id="4" src="images/lillian-bras.jpg" alt="Bras" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Bras" class="col-12 button-character">Bras</button>
+            </div>
+          </div>
+          <div class="col-2">
+            <img id="5" src="images/nereidin-feliciano.jpg" alt="Feliciano" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Feliciano" class="col-12 button-character">Feliciano</button>
+            </div>
+            <img id="6" src="images/mariano-martes.jpg" alt="Martes" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Martes" class="col-12 button-character">Martes</button>
+            </div>
+            <img id="7" src="images/elsa-gelpi.jpg" alt="Gelpi" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Gelpi" class="col-12 button-character">Gelpí</button>
+            </div>
+            <img id="8" src="images/nelliud-torres.jpg" alt="Torres" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Torres" class="col-12 button-character">Torres</button>
+            </div>
+          </div>
+          <div class="col-2">
+            <img id="9" src="images/brenda-dominguez.jpg" alt="Dominguez" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Dominguez" class="col-12 button-character">Domínguez</button>
+            </div>
+            <img id="10" src="images/filiberto-arniella.jpg" alt="Arniella" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Arniella" class="col-12 button-character">Arniella</button>
+            </div>
+            <img id="11" src="images/omar-diaz.png" alt="Diaz" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Diaz" class="col-12 button-character">Díaz</button>
+            </div>
+            <img id="12" src="images/luis-pabon.jpg" alt="Pabon" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Pabon" class="col-12 button-character">Pabón</button>
+            </div>
+          </div>
+          <div class="col-2">
+            <img id="13" src="images/elsie-rivera.jpg" alt="Rivera" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Rivera" class="col-12 button-character">Rivera</button>
+            </div>
+            <img id="14" src="images/raul-guadalupe.jpg" alt="Guadalupe" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Guadalupe" class="col-12 button-character">Guadalupe</button>
+            </div>
+            <img id="15" src="images/ruben-irizarry.jpg" alt="Irrizary" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Irrizary" class="col-12 button-character">Irrizary</button>
+            </div>
+            <img id="16" src="images/clarivel-lasalde.jpg" alt="Lasalde" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Lasalde" class="col-12 button-character">Lasalde</button>
+            </div>
+          </div>
+          <div class="col-2">
+            <img id="17" src="images/jose-rodriguez.jpg" alt="Rodriguez" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Rodriguez" class="col-12 button-character">Rodríguez</button>
+            </div>
+            <img id="18" src="images/claritza-castro.jpg" alt="Castro" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Castro" class="col-12 button-character">Castro</button>
+            </div>
+            <img id="19" src="images/miguel-velez.jpg" alt="Velez" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Velez" class="col-12 button-character">Vélez</button>
+            </div>
+            <img id="20" src="images/ana-merced.jpg" alt="Merced" style="width:100%">
+            <div class="text-container">
+              <button type="button" onclick="guess(this.value)" value="Merced" class="col-12 button-character">Merced</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Chat side-->
+      <div class="col-3 card" style="height: 90vh">
+        <div class="box">
+          <div class="chat" id="chat"></div>
+        </div>
+        <form id="messageForm">
+          <div class="form-group">
+            <div class="button-container">
+              <input class="form-control col-9" id="message" style="height: 7vh;"></input>
+              <input type="submit" class="btn btn-primary col-3" value="send" style="height: 7vh;" />
+            </div>
+          </div>
+        </form>
+
+        <div id="myModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="button-container">
+              <h1>Your turn! </br> </h1>
+             
+              <h5> To disable tiles, click on the image of the character you want to discard.
+                  <br />  <br />If you want to guess, click on the corresponding character's button.
+                  <br />  <br /> Remember, if you guess right, you win! If you guess wrong, you automatically lose.
+                  <br /></h5>
+              <button type="button" id="ask" name="button" class="col-5 button">Got it!</button>
+            </div>
+          </div>
+        </div>
+        <!-- The Modal -->
+        <div id="winModal" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="wclose">&times;</span>
+            <div class="text-container">
+              <h1>Congratulations! You won!</h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Modal -->
+        <div id="loseModal" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="lclose">&times;</span>
+            <div class="text-container">
+              <h1>Sorry, you lost. Better luck next time.</h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Modal -->
+        <div id="giveUpModal" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="gclose">&times;</span>
+            <div class="text-container">
+              <h1>Your opponent left. The game has ended.</h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Modal -->
+        <div id="waitModal" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+          
+            <div class="text-container">
+              <h1>Waiting for opponent...</h1>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" id="pass" name="button" class="col-12 pass-button">Pass turn</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+
+    var socket = io.connect();
+    turn = false;
+
+    function guess(value) {
+
+      if (!turn)
+        alert("You cannot guess when it isn't your turn");
+
+      else {
+        var txt;
+        var r = confirm("Remember, if you guess right, you win! If you guess wrong, you automatically lose. \n\n" +
+          "Confirm your guess: " + value);
+        if (r == true) {
+          winOrLose(value);
+        }
+      }
+
+    }
+
+    function giveUp() {
+      socket.emit("finish");
+      $messageArea.hide();
+      $userFormArea.show();
+    }
+
+    socket.on("exit", function(){
+        giveUpModal.style.display = "block";
+    });
+
+    function chooseCharacter() {
+      characterId = Math.floor((Math.random() * 20) + 1);
+      document.getElementById("playerCharacter").src = document.getElementById(characterId).src;
+      $("#characterName").html(x = document.getElementById(characterId).alt);
+    }
+
+    // function checkTurn() {
+    //   if (socket.emit("check turn")) {
+    //     $messageForm.hide();
+    //   }
+
+    // }
+
+    function winOrLose(value) {
+      socket.emit("guess", value);
+    }
+
+    socket.on("win or lose", function (data) {
+  
+      if (data)
+        winModal.style.display = "block";
+      else
+        loseModal.style.display = "block";
+    });
+
+
+    // Get the modal
+    var passModal = document.getElementById('myModal');
+    var winModal = document.getElementById("winModal");
+    var loseModal = document.getElementById("loseModal");
+    var waitModal = document.getElementById('waitModal');
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+    var span1 = document.getElementsByClassName("wclose")[0];
+    var span2 = document.getElementsByClassName("lclose")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+      passModal.style.display = "none";
+     
+      $messageArea.hide();
+      $userFormArea.show();
+    }
+
+    span1.onclick = function () {
+      winModal.style.display = "none";
+  
+      $messageArea.hide();
+      $userFormArea.show();      
+    }
+
+    span2.onclick = function () {
+      loseModal.style.display = "none";
+
+      $messageArea.hide();
+      $userFormArea.show();
+    }
+
+    var askButton = document.getElementById("ask");
+    askButton.onclick = function () {
+      passModal.style.display = "none";
+      $("#message").focus();
+    }
+
+    var $messageForm = $("#messageForm");
+    var $message = $("#message");
+    var $chat = $("#chat");
+    var $messageArea = $("#messageArea");
+    var $userFormArea = $("#userFormArea");
+    var $userForm = $("#userForm");
+    var $users = $("#users");
+    var $username = $("#username");
+
+
+    $messageForm.submit(function (e) {
+      e.preventDefault();
+      socket.emit("send message", $message.val());
+      $message.val("");
+    });
+
+    socket.on("new message", function (data) {
+      $chat.append('<div class="well" style="word-wrap: break-word"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
+    });
+
+    $userForm.submit(function (e) {
+      e.preventDefault();
+
+      socket.emit("player capacity", function (data) {
+        console.log("Capacity" + data)
+        if (!data) {
+          $("#player").html($username.val());
+          socket.emit("new user", $username.val(), function (data) {
+            if (data) {
+              $userFormArea.hide();
+              $messageArea.show();
+
+              chooseCharacter();
+
+              socket.emit("check turn");
+
+              socket.on("turn type", function (data) {
+                if (!data) {
+                  console.log("Turn" + data);
+                  $("#pass").hide();
+                  waitModal.style.display = "block";
+
+                }
+                else {
+                  turn = true;
+                  passModal.style.display = "block";
+                }
+
+              });
+            }
+
+
+          });
+        }
+
+        else {
+          $username.val("");
+          alert("There is already a game in session");
+        }
+      });
+    });
+
+
+    socket.on("get users", function (data) {
+      if (data.length == 2) {
+        if (document.getElementById("player2").innerHTML == "Waiting for opponent...") {
+          waitModal.style.display = "none";
+        }
+        console.log(data[0] == document.getElementById("player").innerHTML);
+        if (data[0] == document.getElementById("player").innerHTML) {
+          $("#player2").html(data[1]);
+        }
+        else {
+          $("#player2").html(data[0]);
+        }
+      }
+
+
+
+    });
+
+    socket.on("compare", function (data, callback) {
+      alert("Opponent guessed: " + data);
+      console.log("Compare: " + data);
+      if (document.getElementById("characterName").innerHTML == data) {
+        callback(true);
+      }
+      else {
+        callback(false);
+      }
+    });
+
+    $("img").click(function () {
+      if ($(this).css('opacity') == 0.7 || $(this).css('opacity') == 1) {
+        $(this).animate({ opacity: 0.3 }, 1000);
+        opa = 0.3;
+      } else {
+        $(this).animate({ opacity: 1 }, 1000);
+        // $(this).css('img:hover') = 0.7;
+        opa = 1;
+      }
+
+      socket.emit("update opponent", { id: this.id, opacity: opa });
+    });
+
+    socket.on("update board", function (data) {
+      console.log("ID: " + data.id);
+      temp = String(data.id);
+      stringId = "0";
+      stringId += temp;
+      id = parseInt(stringId);
+      console.log("With 0:" + stringId);
+
+      if (data.opacity == 1) {
+        document.getElementById(stringId).style.backgroundColor = "#33b5e5";
+      }
+      else {
+        console.log(data.opacity);
+        document.getElementById(stringId).style.backgroundColor = "red";
+      }
+    });
+
+    $("#pass").on("click", function (e) {
+
+      $("#pass").hide();
+      turn = false;
+      socket.emit('pass turn');
+    });
+
+
+    //This runs everytime the server tells the player its their turn
+    socket.on('your turn', function () {
+      // alert("Your turn");
+      $("#pass").show();
+      turn = true;
+      passModal.style.display = "block";
+    });
+
+    socket.on("nudge", function () {
+      alert("Remember to pass your turn when you are done disabling tiles");
+    });
+
+
+
+  </script>
+</body>
+
+</html>

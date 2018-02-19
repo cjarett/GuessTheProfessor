@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IO Chat</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        body {
+            margin-top: 30px;
+            margin-left: -10px;
+            padding: 0;
+        }
+
+        #messageArea {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="userFormArea" class="row">
+            <div class="col-md012">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label>Enter Username</label>
+                        <input class="form-control" id="username"></input>
+                        <br/>
+                        <input type="submit" class="btn btn-primary" value="Login" />
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="row" id="messageArea">
+            <div class="col-2">
+                <div class="row">
+                    <div class="col-6 menu">
+                        <ul>
+                            <li>UGH Up</li>
+                        </ul>
+                    </div>
+                    <div class="col-6 menu">
+                        <ul>
+                            <li>Restart</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>
+                        <b>Player</b>
+                    </h4>
+                    <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                    <div class="container">
+                        <h4>Character</h4>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>
+                        <b>Opponent</b>
+                    </h4>
+                    <img src="./images/grid.png" alt="Avatar" style="width:100%">
+                </div>
+            </div>
+
+            <div class="col-7 card">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="assets/images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                        <td>
+                            <img src="./images/img_avatar.png" alt="Avatar" style="width:100%">
+                            <h4>Character</h4>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-3 menu card">
+                <div class="box"></div>
+                <div class="row">
+                    <div class="col-6 menu">
+                        <ul>
+                            <li>Ask</li>
+                        </ul>
+                    </div>
+                    <div class="col-6 menu">
+                        <ul>
+                            <li>Guess</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Main chat area
+
+        <div class="col-md-8">
+            <div class="chat" id="chat"></div>
+            <form id="messageForm">
+                <div class="form-group">
+                    <label>Enter Message</label>
+                    <input class="form-control" id="message"></input>
+                    <br/>
+                    <input type="submit" class="btn btn-primary" value="Send Message" />
+                </div>
+            </form>
+            <button id="myBtn">Open Modal</button>
+
+            
+            <div id="myModal" class="modal">
+
+                
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <button type="button" id="ask" name="button">Ask</button>
+                    <button type="button" id="guess" name="button">Guess</button>
+                </div>
+
+            </div>
+
+            
+
+        </div> -->
+
+        </div>
+
+        <script>
+
+
+
+            $(function () {
+
+                var socket = io.connect();
+
+                function checkTurn() {
+                    if (socket.emit("check turn")) {
+                        $messageForm.hide();
+                    }
+
+                }
+
+                // // Get the modal
+                // var modal = document.getElementById('myModal');
+
+                // // Get the button that opens the modal
+                // var btn = document.getElementById("myBtn");
+
+                // // Get the <span> element that closes the modal
+                // var span = document.getElementsByClassName("close")[0];
+
+                // // When the user clicks on the button, open the modal 
+                // btn.onclick = function () {
+                //     modal.style.display = "block";
+                // }
+
+                // // When the user clicks on <span> (x), close the modal
+                // span.onclick = function () {
+                //     modal.style.display = "none";
+                // }
+
+                // var askButton = document.getElementById("ask");
+                // askButton.onclick = function () {
+                //     modal.style.display = "none";
+                // }
+
+                var $messageForm = $("#messageForm");
+                var $message = $("#message");
+                var $chat = $("#chat");
+                var $messageArea = $("#messageArea");
+                var $userFormArea = $("#userFormArea");
+                var $userForm = $("#userForm");
+                var $users = $("#users");
+                var $username = $("#username");
+                //var $player1 = $("#player1");
+                // var $turn = $("#turn");
+
+                $messageForm.submit(function (e) {
+                    e.preventDefault();
+                    socket.emit("send message", $message.val());
+                    $message.val("");
+                });
+
+                socket.on("new message", function (data) {
+                    $chat.append('<div class="well" style="word-wrap: break-word"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
+                });
+
+                $userForm.submit(function (e) {
+                    e.preventDefault();
+                    //$player1.html($username.val());
+                    alert("yes?");
+                    socket.emit("new user", $username.val(), function (data) {
+                        if (data) {
+                            $userFormArea.hide();
+                            $messageArea.show();
+                        }
+                        socket.emit("check turn")
+
+                        socket.on("turn type", function (data) {
+                            if (!data) {
+                                $("#pass").hide();
+                            }
+                            else {
+                                // modal.style.display = "block";
+                            }
+
+                        });
+
+                    });
+                    $username.val("");
+                });
+
+
+                $("#pass").on("click", function (e) {
+                    alert("yes?");
+                    $("#pass").hide();
+                    socket.emit('pass turn');
+                });
+
+
+                //This runs everytime the server tells the player its their turn
+                socket.on('your turn', function () {
+                    alert("Your turn");
+                    $("#pass").show();
+
+                });
+
+                socket.on("nudge", function () {
+                    alert("Remember to pass your turn when you are done disabling tiles");
+                });
+            });
+
+
+        </script>
+</body>
+
+</html>
