@@ -8,7 +8,7 @@
   <title>Guess the Professor</title>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="//code.jquery.com/jquery-latest.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <link rel="stylesheet" href="./style.css">
 
@@ -227,7 +227,7 @@
             <span class="close">&times;</span>
             <div class="button-container">
               <h1>Your turn! </br> </h1>
-             
+
               <h5> To disable tiles, click on the image of the character you want to discard.
                   <br />  <br />If you want to guess, click on the corresponding character's button.
                   <br />  <br /> Remember, if you guess right, you win! If you guess wrong, you automatically lose.
@@ -273,7 +273,7 @@
         <div id="waitModal" class="modal">
           <!-- Modal content -->
           <div class="modal-content">
-          
+
             <div class="text-container">
               <h1>Waiting for opponent...</h1>
             </div>
@@ -335,7 +335,7 @@
     }
 
     socket.on("win or lose", function (data) {
-  
+
       if (data)
         winModal.style.display = "block";
       else
@@ -357,16 +357,16 @@
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
       passModal.style.display = "none";
-     
+
       $messageArea.hide();
       $userFormArea.show();
     }
 
     span1.onclick = function () {
       winModal.style.display = "none";
-  
+
       $messageArea.hide();
-      $userFormArea.show();      
+      $userFormArea.show();
     }
 
     span2.onclick = function () {
